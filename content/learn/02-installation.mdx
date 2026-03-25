@@ -23,6 +23,8 @@ lastUpdated: "2026-03-26"
 
 설치를 위해 터미널을 사용해야 해요. 터미널은 텍스트로 컴퓨터에 명령을 내리는 프로그램이에요.
 
+> **비유**: 스마트폰에서 앱을 탭해서 실행하는 것처럼, 터미널에서는 텍스트를 입력해서 프로그램을 실행해요. 화려하지는 않지만, 훨씬 더 강력한 일을 시킬 수 있어요.
+
 - **Mac**: Spotlight(Cmd+Space)에서 "터미널" 검색하거나, 응용 프로그램 > 유틸리티 > 터미널
 - **Windows**: 시작 메뉴에서 "PowerShell" 검색
 
@@ -30,7 +32,9 @@ lastUpdated: "2026-03-26"
 
 ## 1단계: Node.js 설치
 
-Claude Code를 실행하려면 **Node.js**가 필요해요. Node.js는 JavaScript를 컴퓨터에서 실행할 수 있게 해주는 프로그램인데, Claude Code가 이걸 기반으로 만들어졌어요.
+Claude Code를 실행하려면 **Node.js**가 필요해요.
+
+> **비유**: Claude Code는 자동차, Node.js는 그 자동차가 달리기 위한 **엔진**이에요. 자동차를 운전하려면 엔진이 먼저 있어야 하듯, Claude Code를 사용하려면 Node.js를 먼저 설치해야 해요. 한 번만 설치하면 이후에는 신경 쓸 필요 없어요.
 
 ### Mac에서 설치
 
@@ -73,11 +77,17 @@ Node.js 설치가 완료됐으면, 이제 Claude Code를 설치할 차례예요.
 npm install -g @anthropic-ai/claude-code
 ```
 
-`npm`은 Node.js 패키지(프로그램)를 설치하는 도구예요. `-g`는 "전체 컴퓨터에 설치"라는 뜻이에요. 설치에는 1~2분 정도 걸려요.
+`npm`은 Node.js 패키지(프로그램)를 설치하는 도구예요.
+
+> **비유**: npm은 **앱스토어** 같은 거예요. 앱스토어에서 앱을 검색해서 설치하듯, npm으로 필요한 프로그램을 설치해요. `-g`는 "이 컴퓨터 전체에 설치"라는 뜻이에요.
+
+설치에는 1~2분 정도 걸려요.
 
 ## 3단계: API 키 발급
 
-API 키는 Claude Code가 Anthropic 서버에 접속하기 위한 비밀 열쇠예요. 이 키가 있어야 Claude Code를 사용할 수 있어요.
+API 키는 Claude Code가 Anthropic 서버에 접속하기 위한 비밀 열쇠예요.
+
+> **비유**: 아파트 단지 출입 카드와 같아요. 이 카드(API 키)가 있어야 Anthropic의 AI 서버에 "입장"해서 Claude를 사용할 수 있어요. 카드를 잃어버리거나 다른 사람에게 빌려주면 본인 비용으로 다른 사람이 사용할 수 있으니 조심해야 해요.
 
 1. [console.anthropic.com](https://console.anthropic.com)에 접속해요
 2. 계정이 없다면 "Sign up"으로 가입해요
