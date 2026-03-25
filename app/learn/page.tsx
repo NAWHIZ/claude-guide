@@ -6,13 +6,13 @@ import type { Level } from '@/lib/types'
 
 export const metadata: Metadata = {
   title: '학습 콘텐츠',
-  description: '입문부터 심화까지, 단계별로 Claude를 배워보세요.',
+  description: '설치부터 실전까지, 단계별로 Claude Code를 배워보세요.',
 }
 
 const LEVEL_INFO: { level: Level; emoji: string; desc: string }[] = [
-  { level: 'beginner', emoji: '🌱', desc: 'Claude를 처음 사용하는 분을 위한 기초 가이드' },
-  { level: 'intermediate', emoji: '🚀', desc: '더 좋은 답변을 얻는 기술과 실전 활용법' },
-  { level: 'advanced', emoji: '⚡', desc: '고급 테크닉과 AI 리터러시 높이기' },
+  { level: 'beginner', emoji: '🌱', desc: 'Claude Code가 뭐지, 설치하고 첫 실행하기까지' },
+  { level: 'intermediate', emoji: '🚀', desc: '파일 작업, 프로젝트 활용, 실전 사례 이해하기' },
+  { level: 'advanced', emoji: '⚡', desc: 'CLAUDE.md, 자동화, 고급 설정으로 한단계 더' },
 ]
 
 export default function LearnPage() {
@@ -22,7 +22,7 @@ export default function LearnPage() {
     <div className="mx-auto max-w-5xl px-4 py-12">
       <div className="mb-10">
         <h1 className="text-3xl font-bold text-gray-900">학습 콘텐츠</h1>
-        <p className="mt-2 text-gray-500">순서대로 읽으면 누구나 Claude 파워 유저가 될 수 있어요.</p>
+        <p className="mt-2 text-gray-500">순서대로 읽으면 코딩을 몰라도 Claude Code를 자유자재로 쓸 수 있어요.</p>
       </div>
 
       {LEVEL_INFO.map(({ level, emoji, desc }) => {

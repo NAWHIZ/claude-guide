@@ -1,0 +1,143 @@
+---
+title: "Claude Code 설치하기"
+description: "Node.js 설치부터 API 키 설정까지, Claude Code를 처음 쓸 수 있게 되는 전 과정을 안내해드려요"
+level: "beginner"
+order: 2
+estimatedTime: "15분"
+lastUpdated: "2026-03-26"
+---
+
+# Claude Code 설치하기
+
+처음 설치할 때만 조금 복잡할 수 있어요. 하지만 이 가이드를 따라 하면 누구나 할 수 있습니다. 차근차근 같이 해봐요.
+
+## 준비물
+
+설치를 시작하기 전에 이것들이 있는지 확인해주세요.
+
+- **컴퓨터**: Mac, Windows, Linux 모두 됩니다
+- **인터넷 연결**: 설치 파일을 다운로드해야 해요
+- **Anthropic 계정**: [console.anthropic.com](https://console.anthropic.com)에서 무료로 만들 수 있어요
+
+## 터미널이 뭔가요?
+
+설치를 위해 터미널을 사용해야 해요. 터미널은 텍스트로 컴퓨터에 명령을 내리는 프로그램이에요.
+
+- **Mac**: Spotlight(Cmd+Space)에서 "터미널" 검색하거나, 응용 프로그램 > 유틸리티 > 터미널
+- **Windows**: 시작 메뉴에서 "PowerShell" 검색
+
+터미널을 열면 커서가 깜빡이는 텍스트 창이 나와요. 여기에 명령어를 입력하고 엔터를 누르면 됩니다.
+
+## 1단계: Node.js 설치
+
+Claude Code를 실행하려면 **Node.js**가 필요해요. Node.js는 JavaScript를 컴퓨터에서 실행할 수 있게 해주는 프로그램인데, Claude Code가 이걸 기반으로 만들어졌어요.
+
+### Mac에서 설치
+
+**방법 1 — 직접 다운로드 (더 쉬운 방법):**
+
+1. [nodejs.org](https://nodejs.org)에 접속해요
+2. "LTS" 버전의 초록 버튼을 클릭해서 다운로드해요
+3. 다운로드된 `.pkg` 파일을 열고 안내에 따라 설치해요
+
+**방법 2 — Homebrew 사용 (이미 Homebrew가 있다면):**
+
+터미널에 아래 명령어를 입력하세요.
+
+```bash
+brew install node
+```
+
+### Windows에서 설치
+
+1. [nodejs.org](https://nodejs.org)에 접속해요
+2. "LTS" 버전을 클릭해서 `.msi` 설치 파일을 다운로드해요
+3. 다운로드된 파일을 실행하고 "Next"를 계속 클릭해서 설치해요
+4. 설치가 끝나면 PowerShell을 **새로 열어주세요** (중요!)
+
+### 설치 확인
+
+터미널에서 아래 명령어를 입력해서 Node.js가 잘 설치됐는지 확인해요.
+
+```bash
+node --version
+```
+
+`v20.x.x` 같은 버전 번호가 나오면 성공이에요!
+
+## 2단계: Claude Code 설치
+
+Node.js 설치가 완료됐으면, 이제 Claude Code를 설치할 차례예요. 터미널에 아래 명령어를 입력하세요.
+
+```bash
+npm install -g @anthropic-ai/claude-code
+```
+
+`npm`은 Node.js 패키지(프로그램)를 설치하는 도구예요. `-g`는 "전체 컴퓨터에 설치"라는 뜻이에요. 설치에는 1~2분 정도 걸려요.
+
+## 3단계: API 키 발급
+
+API 키는 Claude Code가 Anthropic 서버에 접속하기 위한 비밀 열쇠예요. 이 키가 있어야 Claude Code를 사용할 수 있어요.
+
+1. [console.anthropic.com](https://console.anthropic.com)에 접속해요
+2. 계정이 없다면 "Sign up"으로 가입해요
+3. 로그인 후 왼쪽 메뉴에서 **"API Keys"** 를 클릭해요
+4. **"Create Key"** 버튼을 클릭해요
+5. 키 이름을 입력하고 (예: "my-claude-code") 생성해요
+6. 생성된 키를 **복사해두세요** — `sk-ant-api03-...`로 시작하는 긴 문자열이에요
+
+<Callout type="warning">
+API 키는 절대 다른 사람과 공유하거나 GitHub 같은 곳에 올리지 마세요. 이 키로 여러분 계정에서 요금이 청구되기 때문에, 유출되면 모르는 사람이 여러분 비용으로 Claude를 사용할 수 있어요.
+</Callout>
+
+## 4단계: API 키 설정
+
+발급받은 API 키를 컴퓨터에 설정해야 해요.
+
+### Mac / Linux
+
+터미널에 아래 명령어를 입력하세요. `sk-ant-...` 부분을 여러분의 실제 API 키로 바꿔주세요.
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-api03-여기에본인키입력
+```
+
+이 방법은 현재 터미널 창에서만 유효해요. 터미널을 새로 열면 다시 설정해야 해요. 매번 입력하기 귀찮다면, `.zshrc` 또는 `.bashrc` 파일에 위 줄을 추가하면 영구적으로 설정돼요. (자세한 방법은 [상세 설치 가이드](/reference/installation-guide)를 참고하세요.)
+
+### Windows (PowerShell)
+
+```powershell
+$env:ANTHROPIC_API_KEY="sk-ant-api03-여기에본인키입력"
+```
+
+## 설치 완료 확인
+
+모든 설치가 끝났어요! 제대로 설치됐는지 확인해볼까요?
+
+<Callout type="tip">
+터미널에 `claude --version`을 입력해서 버전 번호가 나오면 설치 성공이에요. 그 다음 `claude`를 입력하면 Claude Code가 실행됩니다.
+</Callout>
+
+## 전체 과정 요약
+
+<StepByStep>
+  <Step number={1}>
+    **Node.js 설치**: [nodejs.org](https://nodejs.org)에서 LTS 버전 다운로드 후 설치
+  </Step>
+  <Step number={2}>
+    **터미널 열기**: Mac은 Terminal.app, Windows는 PowerShell 실행
+  </Step>
+  <Step number={3}>
+    **Claude Code 설치**: `npm install -g @anthropic-ai/claude-code` 입력 후 엔터
+  </Step>
+  <Step number={4}>
+    **API 키 발급**: [console.anthropic.com](https://console.anthropic.com)에서 새 API 키 생성 및 복사
+  </Step>
+  <Step number={5}>
+    **API 키 설정**: 터미널에 `export ANTHROPIC_API_KEY=발급받은키` 입력 후 `claude` 실행
+  </Step>
+</StepByStep>
+
+---
+
+다음: [처음 실행해보기 →](/learn/03-first-use)

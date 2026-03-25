@@ -12,15 +12,15 @@ export default function HomePage() {
       <section className="bg-gradient-to-br from-purple-50 via-white to-violet-50 py-20 px-4">
         <div className="mx-auto max-w-3xl text-center">
           <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-1.5 text-sm font-medium text-purple-700">
-            ✦ 비개발자를 위한 Claude 완전 정복
+            ✦ 비개발자를 위한 Claude Code 완전 정복
           </div>
           <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            Claude, 이제 제대로<br />
-            <span className="text-purple-700">이해하고 활용하세요</span>
+            Claude Code,
+            <span className="text-purple-700">코딩 몰라도 됩니다</span>
           </h1>
           <p className="mt-6 text-lg text-gray-600 leading-relaxed">
-            AI 지식이 없어도 괜찮아요. 입문부터 심화까지,<br className="hidden sm:block" />
-            한국어로 쉽고 깊게 배우는 Claude 완전 가이드입니다.
+            개발 지식 없어도 괜찮아요. 설치부터 실전까지,
+            한국어로 쉽고 깊게 배우는 Claude Code 완전 가이드입니다.
           </p>
           <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
             <Link
@@ -43,13 +43,13 @@ export default function HomePage() {
       <section className="py-16 px-4">
         <div className="mx-auto max-w-5xl">
           <h2 className="text-2xl font-bold text-gray-900 mb-2">학습 경로</h2>
-          <p className="text-gray-500 mb-8">순서대로 읽으면 누구나 Claude 파워 유저가 될 수 있어요.</p>
+          <p className="text-gray-500 mb-8">순서대로 읽으면 코딩을 몰라도 Claude Code를 자유자재로 쓸 수 있어요.</p>
 
           <div className="grid gap-4 sm:grid-cols-3">
             {[
-              { level: '입문', emoji: '🌱', desc: 'Claude가 뭔지, 어떻게 시작하는지', color: 'border-green-200 bg-green-50', badge: 'text-green-700' },
-              { level: '중급', emoji: '🚀', desc: '더 좋은 답을 얻는 기술과 실전 활용', color: 'border-blue-200 bg-blue-50', badge: 'text-blue-700' },
-              { level: '심화', emoji: '⚡', desc: '고급 테크닉과 AI 리터러시', color: 'border-purple-200 bg-purple-50', badge: 'text-purple-700' },
+              { level: '입문', emoji: '🌱', desc: 'Claude Code가 뭔지, 어떻게 설치하는지', color: 'border-green-200 bg-green-50', badge: 'text-green-700' },
+              { level: '중급', emoji: '🚀', desc: '파일 작업, 프로젝트 활용, 실전 사례', color: 'border-blue-200 bg-blue-50', badge: 'text-blue-700' },
+              { level: '심화', emoji: '⚡', desc: '자동화, 설정 커스터마이징, 고급 활용', color: 'border-purple-200 bg-purple-50', badge: 'text-purple-700' },
             ].map(({ level, emoji, desc, color, badge }) => (
               <div key={level} className={`rounded-2xl border p-6 ${color}`}>
                 <div className="text-3xl mb-3">{emoji}</div>
