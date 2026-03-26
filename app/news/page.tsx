@@ -37,8 +37,38 @@ function groupByDate(items: NewsItem[]) {
 }
 
 function formatDate(dateStr: string) {
-  const d = new Date(dateStr)
+  const d = new Date(dateStr + 'T00:00:00')
   return d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
+}
+
+function formatTime(isoStr: string) {
+  const d = new Date(isoStr)
+  return d.toLocaleString('ko-KR', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Seoul' })
+}
+
+function SummaryLines({ text }: { text: string }) {
+  const emojiMap: Record<string, string> = {
+    '달라진 점': '🔄',
+    '핵심 내용': '💡',
+    '활용 포인트': '✅',
+  }
+  const lines = text.split('\n').filter(l => l.trim())
+  return (
+    <div className="space-y-2 mt-3">
+      {lines.map((line, i) => {
+        const match = line.match(/^▶\s*([^：:]+)[:：]\s*(.+)/)
+        if (!match) return <p key={i} className="text-gray-600 text-sm">{line}</p>
+        const [, label, content] = match
+        const emoji = emojiMap[label.trim()] ?? '▶'
+        return (
+          <div key={i} className="flex gap-2 text-sm">
+            <span className="shrink-0">{emoji}</span>
+            <span><span className="font-medium text-gray-700">{label.trim()}:</span> <span className="text-gray-600">{content}</span></span>
+          </div>
+        )
+      })}
+    </div>
+  )
 }
 
 export default async function NewsPage() {
@@ -92,7 +122,7 @@ export default async function NewsPage() {
                       >
                         <div className="flex items-start gap-3">
                           <div className="flex-1 min-w-0">
-                            <div className="flex items-center gap-2 mb-2">
+                            <div className="flex items-center justify-between gap-2 mb-2">
                               {item.priority === 'official' ? (
                                 <span className="text-xs font-medium px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full border border-amber-200">
                                   ★ {item.source_name}
@@ -102,13 +132,12 @@ export default async function NewsPage() {
                                   {item.source_name}
                                 </span>
                               )}
+                              <span className="text-xs text-gray-400 shrink-0">{formatTime(item.created_at)} 저장</span>
                             </div>
                             <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-2 line-clamp-2">
                               {item.title}
                             </h3>
-                            <p className="text-gray-600 text-sm leading-relaxed">
-                              {item.summary_ko}
-                            </p>
+                            <SummaryLines text={item.summary_ko} />
                             {item.source_url && (
                               <a
                                 href={item.source_url}
