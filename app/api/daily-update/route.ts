@@ -48,7 +48,8 @@ export async function GET(req: NextRequest) {
 
       const tavilyData = await tavilyRes.json()
       const results = tavilyData.results || []
-      debug.push(`${source.source}: ${results.length}건`)
+      const rawDebug = results.length === 0 ? ` (raw:${JSON.stringify(tavilyData).slice(0,200)})` : ''
+      debug.push(`${source.source}: ${results.length}건${rawDebug}`)
 
       for (const result of results) {
         if (!result.title) continue
