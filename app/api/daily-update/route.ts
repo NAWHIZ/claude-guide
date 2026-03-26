@@ -31,6 +31,7 @@ export async function GET(req: NextRequest) {
 
   const saved: string[] = []
   const errors: string[] = []
+  const debug: string[] = []
 
   for (const source of SEARCH_QUERIES) {
     try {
@@ -47,9 +48,10 @@ export async function GET(req: NextRequest) {
 
       const tavilyData = await tavilyRes.json()
       const results = tavilyData.results || []
+      debug.push(`${source.source}: ${results.length}건`)
 
       for (const result of results) {
-        if (!result.title || !result.content) continue
+        if (!result.title) continue
 
         // Claude Haiku로 한국어 요약
         const message = await anthropic.messages.create({
@@ -79,7 +81,11 @@ export async function GET(req: NextRequest) {
           { onConflict: 'title,source_name' }
         )
 
-        if (!error) saved.push(result.title)
+        if (error) {
+          errors.push(`DB오류 [${result.title.slice(0,30)}]: ${error.message}`)
+        } else {
+          saved.push(result.title)
+        }
       }
     } catch (err) {
       errors.push(`${source.source}: ${err}`)
@@ -91,5 +97,6 @@ export async function GET(req: NextRequest) {
     saved: saved.length,
     items: saved,
     errors,
+    debug,
   })
 }
