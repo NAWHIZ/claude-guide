@@ -79,7 +79,7 @@ export async function GET(req: NextRequest) {
             priority: source.priority,
             published_date: new Date().toISOString().split('T')[0],
           },
-          { onConflict: 'title,source_name' }
+          { onConflict: 'title,source_name', ignoreDuplicates: true }
         )
 
         if (error) {
