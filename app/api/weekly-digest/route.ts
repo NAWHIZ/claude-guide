@@ -49,7 +49,7 @@ export async function GET(req: NextRequest) {
 
   const message = await anthropic.messages.create({
     model: 'claude-sonnet-4-6',
-    max_tokens: 2000,
+    max_tokens: 4000,
     messages: [{
       role: 'user',
       content: `다음은 이번 주(${weekStart} ~ ${weekEnd}) 수집된 ${newsItems.length}개의 Claude Code·AI 뉴스입니다.
