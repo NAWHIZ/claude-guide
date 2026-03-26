@@ -44,14 +44,6 @@ export default async function NewsPage() {
           <p className="text-gray-500">
             Claude Code · 바이브코딩 최신 업데이트를 매일 자동 수집해요.
           </p>
-          <div className="mt-3 flex items-center gap-3 text-sm">
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 rounded-full border border-amber-200">
-              ★ 공식 소스
-            </span>
-            <span className="inline-flex items-center gap-1.5 px-2.5 py-1 bg-blue-50 text-blue-700 rounded-full border border-blue-200">
-              💬 커뮤니티
-            </span>
-          </div>
         </div>
 
         {news.length === 0 ? (
