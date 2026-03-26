@@ -41,7 +41,7 @@ export async function GET(req: NextRequest) {
           api_key: process.env.TAVILY_API_KEY,
           query: source.query,
           max_results: 3,
-          days: 1,
+          days: 7,
         }),
       })
 
