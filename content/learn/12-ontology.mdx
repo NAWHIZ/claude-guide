@@ -176,6 +176,37 @@ Claude Code가 CLAUDE.md를 읽고 프로젝트를 정확히 설명한다면 온
 온톨로지를 잘 만들면 새 세션에서도 "처음 보는 프로젝트"가 아니라 "잘 아는 프로젝트"처럼 Claude Code가 작업해요. 한 번 투자해두면 이후 모든 작업이 훨씬 빠르고 정확해집니다.
 </Callout>
 
+## 퀴즈로 확인하기
+
+<Quiz
+  questions={[
+    {
+      question: "Claude Code에서 '온톨로지'란?",
+      options: ["그리스 철학의 한 분야", "프로젝트의 지식과 맥락을 체계적으로 구조화한 것", "파일 압축 알고리즘", "인터넷 검색 방식"],
+      answer: 1,
+      explanation: "온톨로지는 Claude Code가 프로젝트를 얼마나 잘 이해하느냐를 결정하는 지식 체계예요."
+    },
+    {
+      question: "AGENTS.md 파일의 역할은?",
+      options: ["API 키를 저장", "여러 에이전트 각각의 역할과 규칙을 정의", "파일 목록 관리", "이미지 저장"],
+      answer: 1,
+      explanation: "AGENTS.md는 각 에이전트(팀원)가 어떤 역할을 하고 어떤 규칙을 따르는지 정의해요."
+    },
+    {
+      question: "좋은 온톨로지 구축의 핵심은?",
+      options: ["파일을 최대한 많이 만들기", "영어로만 작성하기", "프로젝트 목적, 규칙, 역할을 명확히 문서화하기", "복잡한 코드 작성하기"],
+      answer: 2,
+      explanation: "Claude Code가 프로젝트를 잘 이해할수록 더 정확한 작업을 해줘요. 명확한 문서화가 핵심이에요."
+    },
+    {
+      question: ".omc/project-memory.json의 역할은?",
+      options: ["비밀번호 저장", "이미지 캐시", "프로젝트의 중요 결정사항과 진행 상황을 기억하는 장기 메모리", "코드 자동 실행"],
+      answer: 2,
+      explanation: "project-memory.json은 Claude Code가 세션 간에도 중요한 정보를 기억하게 해줘요."
+    }
+  ]}
+/>
+
 ---
 
 다음: [MCP 서버로 능력 확장하기 →](/learn/13-mcp-servers)
