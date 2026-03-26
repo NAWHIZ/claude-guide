@@ -57,22 +57,32 @@ export async function GET(req: NextRequest) {
         // Claude Haiku로 한국어 요약
         const message = await anthropic.messages.create({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 400,
+          max_tokens: 500,
           messages: [{
             role: 'user',
-            content: `다음 영어 기사를 비개발자도 이해할 수 있게 한국어로 개조식으로 요약해줘. 반드시 아래 형식 그대로 출력해. 다른 말은 절대 하지 마.
+            content: `다음 영어 기사를 비개발자도 이해할 수 있게 한국어로 개조식으로 요약해줘. 반드시 아래 형식 그대로만 출력해. 다른 말은 절대 하지 마.
 
+CATEGORY: (dev/design/pm/marketing/office 중 하나만)
 ▶ 달라진 점: (이전과 비교해 무엇이 바뀌었는지 1줄)
 ▶ 핵심 내용: (가장 중요한 변화나 사실 1줄)
 ▶ 활용 포인트: (이제 무엇을 할 수 있는지 1줄)
+
+직무 기준:
+- dev: 개발자 (API, 코딩, 시스템 구축)
+- design: 디자이너 (UI/UX, 비주얼 작업)
+- pm: 기획자 (PM, 제품 전략, 로드맵)
+- marketing: 마케터 (콘텐츠, 광고, 성장)
+- office: 일반사무 (코딩 없이 업무 자동화)
 
 제목: ${result.title}
 내용: ${(result.content as string).slice(0, 800)}`,
           }],
         })
 
-        const summaryKo =
-          message.content[0].type === 'text' ? message.content[0].text : ''
+        const raw = message.content[0].type === 'text' ? message.content[0].text : ''
+        const categoryMatch = raw.match(/^CATEGORY:\s*(dev|design|pm|marketing|office)/m)
+        const category = categoryMatch ? categoryMatch[1] : 'dev'
+        const summaryKo = raw.replace(/^CATEGORY:.*\n?/m, '').trim()
 
         const { error } = await supabase.from('news_items').upsert(
           {
@@ -81,6 +91,7 @@ export async function GET(req: NextRequest) {
             source_name: source.source,
             source_url: result.url,
             priority: source.priority,
+            category,
             published_date: new Date().toISOString().split('T')[0],
           },
           { onConflict: 'title,source_name', ignoreDuplicates: true }

@@ -1,5 +1,6 @@
 import { createClient } from '@supabase/supabase-js'
 import Link from 'next/link'
+import { NewsFilter } from './NewsFilter'
 
 export const dynamic = 'force-dynamic'
 
@@ -10,6 +11,7 @@ type NewsItem = {
   source_name: string
   source_url: string | null
   priority: 'official' | 'community'
+  category: string
   published_date: string
   created_at: string
 }
@@ -23,64 +25,18 @@ async function getNews(): Promise<NewsItem[]> {
     .from('news_items')
     .select('*')
     .order('created_at', { ascending: false })
-    .limit(60)
+    .limit(100)
   return (data as NewsItem[]) || []
 }
 
-function groupByDate(items: NewsItem[]) {
-  return items.reduce<Record<string, NewsItem[]>>((acc, item) => {
-    const date = item.published_date || item.created_at.split('T')[0]
-    if (!acc[date]) acc[date] = []
-    acc[date].push(item)
-    return acc
-  }, {})
-}
-
-function formatDate(dateStr: string) {
-  const d = new Date(dateStr + 'T00:00:00')
-  return d.toLocaleDateString('ko-KR', { year: 'numeric', month: 'long', day: 'numeric' })
-}
-
-function formatTime(isoStr: string) {
-  const d = new Date(isoStr)
-  return d.toLocaleString('ko-KR', { month: 'long', day: 'numeric', hour: '2-digit', minute: '2-digit', timeZone: 'Asia/Seoul' })
-}
-
-function SummaryLines({ text }: { text: string }) {
-  const emojiMap: Record<string, string> = {
-    '달라진 점': '🔄',
-    '핵심 내용': '💡',
-    '활용 포인트': '✅',
-  }
-  const lines = text.split('\n').filter(l => l.trim())
-  return (
-    <div className="space-y-2 mt-3">
-      {lines.map((line, i) => {
-        const match = line.match(/^▶\s*([^：:]+)[:：]\s*(.+)/)
-        if (!match) return <p key={i} className="text-gray-600 text-sm">{line}</p>
-        const [, label, content] = match
-        const emoji = emojiMap[label.trim()] ?? '▶'
-        return (
-          <div key={i} className="flex gap-2 text-sm">
-            <span className="shrink-0">{emoji}</span>
-            <span><span className="font-medium text-gray-700">{label.trim()}:</span> <span className="text-gray-600">{content}</span></span>
-          </div>
-        )
-      })}
-    </div>
-  )
-}
 
 export default async function NewsPage() {
   const news = await getNews()
-  const grouped = groupByDate(news)
-  const dates = Object.keys(grouped).sort((a, b) => b.localeCompare(a))
 
   return (
     <div className="min-h-screen bg-gray-50">
       <div className="max-w-3xl mx-auto px-4 py-10">
-        {/* 헤더 */}
-        <div className="mb-10">
+        <div className="mb-8">
           <Link href="/" className="text-sm text-gray-400 hover:text-gray-600 mb-4 inline-block">
             ← 홈으로
           </Link>
@@ -105,57 +61,7 @@ export default async function NewsPage() {
             <p className="text-sm">매일 오전 자동으로 업데이트돼요.</p>
           </div>
         ) : (
-          <div className="space-y-10">
-            {dates.map((date) => (
-              <section key={date}>
-                <h2 className="text-sm font-semibold text-gray-400 uppercase tracking-wider mb-4 flex items-center gap-2">
-                  <span className="w-8 h-px bg-gray-200" />
-                  {formatDate(date)}
-                </h2>
-                <div className="space-y-4">
-                  {grouped[date]
-                    .sort((a, b) => (a.priority === 'official' ? -1 : 1))
-                    .map((item) => (
-                      <article
-                        key={item.id}
-                        className="bg-white rounded-xl border border-gray-100 p-5 shadow-sm hover:shadow-md transition-shadow"
-                      >
-                        <div className="flex items-start gap-3">
-                          <div className="flex-1 min-w-0">
-                            <div className="flex items-center justify-between gap-2 mb-2">
-                              {item.priority === 'official' ? (
-                                <span className="text-xs font-medium px-2 py-0.5 bg-amber-50 text-amber-700 rounded-full border border-amber-200">
-                                  ★ {item.source_name}
-                                </span>
-                              ) : (
-                                <span className="text-xs font-medium px-2 py-0.5 bg-blue-50 text-blue-700 rounded-full border border-blue-200">
-                                  {item.source_name}
-                                </span>
-                              )}
-                              <span className="text-xs text-gray-400 shrink-0">{formatTime(item.created_at)} 저장</span>
-                            </div>
-                            <h3 className="font-semibold text-gray-900 text-sm leading-snug mb-2 line-clamp-2">
-                              {item.title}
-                            </h3>
-                            <SummaryLines text={item.summary_ko} />
-                            {item.source_url && (
-                              <a
-                                href={item.source_url}
-                                target="_blank"
-                                rel="noopener noreferrer"
-                                className="mt-3 inline-flex items-center gap-1 text-xs text-purple-600 hover:text-purple-800 font-medium"
-                              >
-                                원문 보기 →
-                              </a>
-                            )}
-                          </div>
-                        </div>
-                      </article>
-                    ))}
-                </div>
-              </section>
-            ))}
-          </div>
+          <NewsFilter news={news} />
         )}
       </div>
     </div>
