@@ -2,6 +2,7 @@ import Link from 'next/link'
 import { getAllLearnPosts } from '@/lib/content'
 import { LevelBadge } from '@/components/level-badge'
 import { createClient } from '@supabase/supabase-js'
+import { HeroRoles } from '@/components/hero-roles'
 
 export const dynamic = 'force-dynamic'
 
@@ -25,36 +26,7 @@ export default async function HomePage() {
 
   return (
     <div>
-      {/* 히어로 */}
-      <section className="bg-gradient-to-br from-purple-50 via-white to-violet-50 py-20 px-4">
-        <div className="mx-auto max-w-3xl text-center">
-          <div className="mb-4 inline-flex items-center gap-2 rounded-full bg-purple-100 px-4 py-1.5 text-sm font-medium text-purple-700">
-            ✦ 비개발자를 위한 Claude Code 완전 정복
-          </div>
-          <h1 className="text-4xl font-bold tracking-tight text-gray-900 sm:text-5xl">
-            Claude Code,
-            <span className="text-purple-700">코딩 몰라도 됩니다</span>
-          </h1>
-          <p className="mt-6 text-lg text-gray-600 leading-relaxed">
-            개발 지식 없어도 괜찮아요. 설치부터 실전까지,
-            한국어로 쉽고 깊게 배우는 Claude Code 완전 가이드입니다.
-          </p>
-          <div className="mt-8 flex flex-col sm:flex-row gap-3 justify-center">
-            <Link
-              href="/learn"
-              className="rounded-xl bg-purple-700 px-6 py-3 text-sm font-semibold text-white shadow-sm hover:bg-purple-800 transition-colors"
-            >
-              학습 시작하기 →
-            </Link>
-            <Link
-              href="/reference"
-              className="rounded-xl border border-gray-300 bg-white px-6 py-3 text-sm font-semibold text-gray-700 hover:bg-gray-50 transition-colors"
-            >
-              레퍼런스 보기
-            </Link>
-          </div>
-        </div>
-      </section>
+      <HeroRoles />
 
       {/* 학습 경로 소개 */}
       <section className="py-16 px-4">
