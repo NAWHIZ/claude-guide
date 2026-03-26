@@ -20,8 +20,6 @@ const ROLES = [
   { key: 'design', label: '디자인', emoji: '🎨' },
   { key: 'pm', label: 'PM', emoji: '📋' },
   { key: 'marketing', label: '마케팅', emoji: '📣' },
-  { key: 'official', label: '공식', emoji: '⭐' },
-  { key: 'community', label: '커뮤니티', emoji: '💬' },
   { key: 'office', label: '일반사무', emoji: '🗂️' },
 ]
 
@@ -74,17 +72,33 @@ function groupByDate(items: NewsItem[]) {
 
 export function NewsFilter({ news }: { news: NewsItem[] }) {
   const [activeRole, setActiveRole] = useState('all')
+  const [activePriority, setActivePriority] = useState('all')
 
-  const filtered = activeRole === 'all' ? news
-    : activeRole === 'official' || activeRole === 'community'
-      ? news.filter(n => n.priority === activeRole)
-      : news.filter(n => Array.isArray(n.category) && n.category.includes(activeRole))
+  const byPriority = activePriority === 'all' ? news : news.filter(n => n.priority === activePriority)
+  const filtered = activeRole === 'all' ? byPriority
+    : byPriority.filter(n => Array.isArray(n.category) && n.category.includes(activeRole))
   const grouped = groupByDate(filtered)
   const dates = Object.keys(grouped).sort((a, b) => b.localeCompare(a))
 
   return (
     <>
-      {/* 역할 필터 탭 */}
+      {/* 공식/커뮤니티 필터 */}
+      <div className="flex items-center gap-2 mb-4">
+        {([
+          { key: 'all', label: '전체', cnt: news.length, active: 'bg-gray-400 text-white border-gray-400', inactive: 'bg-white text-gray-500 border-gray-200 hover:border-gray-300 hover:text-gray-700' },
+          { key: 'official', label: '★ 공식 소스', cnt: news.filter(n => n.priority === 'official').length, active: 'bg-amber-500 text-white border-amber-500', inactive: 'bg-amber-50 text-amber-700 border-amber-200 hover:bg-amber-100' },
+          { key: 'community', label: '💬 커뮤니티', cnt: news.filter(n => n.priority === 'community').length, active: 'bg-blue-500 text-white border-blue-500', inactive: 'bg-blue-50 text-blue-700 border-blue-200 hover:bg-blue-100' },
+        ] as const).map(({ key, label, cnt, active, inactive }) => (
+          <button key={key} onClick={() => setActivePriority(key as string)}
+            className={`inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-sm font-medium border transition-colors ${activePriority === key ? active : inactive}`}
+          >
+            {label}
+            <span className="text-xs opacity-70">{cnt}</span>
+          </button>
+        ))}
+      </div>
+
+      {/* 직무 필터 탭 */}
       <div className="flex flex-wrap gap-2 mb-8">
         {ROLES.map(role => (
           <button
@@ -100,9 +114,7 @@ export function NewsFilter({ news }: { news: NewsItem[] }) {
             <span>{role.label}</span>
             {role.key !== 'all' && (
               <span className={`text-xs ${activeRole === role.key ? 'text-purple-200' : 'text-gray-400'}`}>
-                {role.key === 'official' || role.key === 'community'
-                  ? news.filter(n => n.priority === role.key).length
-                  : news.filter(n => Array.isArray(n.category) && n.category.includes(role.key)).length}
+                {byPriority.filter(n => Array.isArray(n.category) && n.category.includes(role.key)).length}
               </span>
             )}
           </button>
