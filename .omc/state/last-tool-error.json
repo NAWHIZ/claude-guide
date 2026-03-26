@@ -1,0 +1,7 @@
+{
+  "tool_name": "Bash",
+  "tool_input_preview": "{\"command\":\"git add -A -- ':!.env.local' && git commit -m \\\"최신 소식 자동 업데이트 시스템 추가\\n\\n- /news 페이지: Supabase에서 뉴스 피드 표시\\n- /api/daily-update: Tavily 검색 + Claude 요약 + Supabase 저장\\n- vercel.json: 매일 오전 1시(...",
+  "error": "Exit code 1\nThe following paths are ignored by one of your .gitignore files:\n.env.local\nhint: Use -f if you really want to add them.\nhint: Disable this message with \"git config set advice.addIgnoredFile false\"",
+  "timestamp": "2026-03-26T08:42:17.332Z",
+  "retry_count": 1
+}

@@ -5,6 +5,7 @@ import { usePathname } from 'next/navigation'
 import { useState } from 'react'
 
 const links = [
+  { href: '/news', label: '최신 소식' },
   { href: '/learn', label: '학습하기' },
   { href: '/reference', label: '레퍼런스' },
 ]
