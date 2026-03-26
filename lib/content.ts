@@ -1,7 +1,7 @@
 import fs from 'fs'
 import path from 'path'
 import matter from 'gray-matter'
-import type { LearnMeta, ReferenceMeta, LearnPost, ReferencePost } from './types'
+import type { LearnMeta, ReferenceMeta, LearnPost, ReferencePost, Category } from './types'
 
 const CONTENT_DIR = path.join(process.cwd(), 'content')
 
@@ -28,6 +28,24 @@ export function getAllLearnPosts(): LearnPost[] {
       return { ...data, slug, content }
     })
     .sort((a, b) => a.order - b.order)
+}
+
+export function getCommonLearnPosts(): LearnPost[] {
+  return getAllLearnPosts().filter((p) => !p.category || p.category === 'common')
+}
+
+export function getRoleLearnPosts(category: Exclude<Category, 'common'>): LearnPost[] {
+  return getAllLearnPosts().filter((p) => p.category === category)
+}
+
+export function getAllRoleLearnPosts(): Record<Exclude<Category, 'common'>, LearnPost[]> {
+  const all = getAllLearnPosts()
+  return {
+    pm:       all.filter((p) => p.category === 'pm'),
+    designer: all.filter((p) => p.category === 'designer'),
+    marketer: all.filter((p) => p.category === 'marketer'),
+    office:   all.filter((p) => p.category === 'office'),
+  }
 }
 
 export function getLearnPost(slug: string): LearnPost | null {
