@@ -7,8 +7,7 @@ const ROLES = [
   {
     key: 'pm',
     label: '💼 PM / 기획자',
-    headline: '내가 만든 도구로
-일하는 PM',
+    headline: '내가 만든 도구로\n일하는 PM',
     sub: 'Claude Code는 답변만 주는 AI가 아니에요.\n실제로 파일을 만들고, 데이터를 분석하고, 자동화 도구를 직접 구축합니다.',
     befores: [
       { before: '경직사 웹사이트 일일이 들어가 정리', after: '자동 크롤링후 분석 리포트 파일로 저장' },
@@ -25,8 +24,7 @@ const ROLES = [
   {
     key: 'design',
     label: '🎨 디자이너',
-    headline: 'Figma에서 클릭하면
-코드가 나옵니다',
+    headline: 'Figma에서 클릭하면\n코드가 나옵니다',
     sub: 'Claude Code + Figma MCP 연동으로\n디자인 컴포넌트가 실제 코드 파일로 변환됩니다.',
     befores: [
       { before: '디자인 컴포넌트 코드 구현은 개발자 담당', after: 'Figma 컴포넌트 선택하면 코드 직접 생성' },
