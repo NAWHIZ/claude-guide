@@ -57,13 +57,17 @@ export async function GET(req: NextRequest) {
         // Claude Haiku로 한국어 요약
         const message = await anthropic.messages.create({
           model: 'claude-haiku-4-5-20251001',
-          max_tokens: 250,
+          max_tokens: 400,
           messages: [{
             role: 'user',
-            content: `다음 영어 기사를 비개발자도 이해할 수 있게 한국어로 2-3문장으로 요약해줘. 전문 용어는 쉽게 설명해줘. 요약만 출력해. 다른 말 하지 마.
+            content: `다음 영어 기사를 비개발자도 이해할 수 있게 한국어로 개조식으로 요약해줘. 반드시 아래 형식 그대로 출력해. 다른 말은 절대 하지 마.
+
+▶ 달라진 점: (이전과 비교해 무엇이 바뀌었는지 1줄)
+▶ 핵심 내용: (가장 중요한 변화나 사실 1줄)
+▶ 활용 포인트: (이제 무엇을 할 수 있는지 1줄)
 
 제목: ${result.title}
-내용: ${(result.content as string).slice(0, 600)}`,
+내용: ${(result.content as string).slice(0, 800)}`,
           }],
         })
 
