@@ -12,7 +12,7 @@ export const metadata: Metadata = {
 const LEVEL_INFO: { level: Level; emoji: string; desc: string }[] = [
   { level: 'beginner', emoji: '🌱', desc: 'Claude Code가 뭐지, 설치하고 첫 실행하기까지' },
   { level: 'intermediate', emoji: '🚀', desc: '파일 작업, 프로젝트 활용, 실전 사례 이해하기' },
-  { level: 'advanced', emoji: '⚡', desc: 'CLAUDE.md, 자동화, 고급 설정으로 한단계 더' },
+  { level: 'advanced', emoji: '⚡', desc: '훅, 오케스트레이션, 온톨로지, MCP 서버로 완전 자동화' },
 ]
 
 export default function LearnPage() {

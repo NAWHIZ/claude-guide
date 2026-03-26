@@ -1,0 +1,180 @@
+---
+title: "훅(Hook)으로 자동 규칙 만들기"
+description: "Claude Code가 특정 행동을 할 때 자동으로 실행되는 규칙을 설정하는 방법"
+level: "advanced"
+order: 10
+estimatedTime: "15분"
+lastUpdated: "2026-03-26"
+---
+
+# 훅(Hook)으로 자동 규칙 만들기
+
+훅은 Claude Code가 특정 행동을 하기 전이나 후에 자동으로 뭔가를 실행하게 만드는 기능이에요. 한 번 설정해두면 매번 신경 쓰지 않아도 자동으로 동작합니다.
+
+## 훅이 뭔가요?
+
+> **비유**: 자동문 같은 거예요. 사람이 가까이 오면(특정 상황) 자동으로 문이 열리죠(자동 실행). 여러분이 매번 문을 열 필요가 없어요. 훅도 마찬가지로 "Claude Code가 파일을 수정할 때마다 자동으로 백업해줘" 같은 규칙을 만들 수 있어요.
+
+훅의 종류:
+- **PreToolUse**: Claude Code가 어떤 도구를 쓰기 **전에** 실행
+- **PostToolUse**: Claude Code가 어떤 도구를 쓴 **후에** 실행
+- **Stop**: Claude Code가 응답을 **완료한 후에** 실행
+
+## 훅을 어디에 설정하나요?
+
+훅은 Claude Code의 설정 파일에 저장돼요. 설정 파일 위치:
+
+- **전역 설정** (모든 프로젝트에 적용): `~/.claude/settings.json`
+- **프로젝트 설정** (현재 프로젝트에만 적용): `.claude/settings.json`
+
+<Callout type="tip">
+설정 파일이 없다면 Claude Code에게 "~/.claude/settings.json 파일을 열어줘"라고 하면 만들어줘요.
+</Callout>
+
+## 설정 파일 기본 구조
+
+```json
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Write",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo '파일이 저장됐어요!'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+어렵게 보이지만 구조는 단순해요:
+- `PostToolUse`: 도구 사용 **후에** 실행
+- `matcher`: 어떤 도구를 감지할지 (`Write`, `Edit`, `Bash` 등)
+- `command`: 실행할 명령어
+
+## 실용적인 훅 예시
+
+### 파일 수정 시 자동 백업
+
+Claude Code가 파일을 수정할 때마다 자동으로 백업 폴더에 복사해두는 훅이에요.
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Edit",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "mkdir -p .backups && cp \"$CLAUDE_TOOL_INPUT_FILE_PATH\" \".backups/$(basename $CLAUDE_TOOL_INPUT_FILE_PATH).$(date +%Y%m%d_%H%M%S).bak\" 2>/dev/null || true"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### 작업 완료 시 소리 알림
+
+Claude Code가 모든 응답을 마쳤을 때 소리로 알려주는 훅이에요. 긴 작업을 시켜놓고 다른 일을 하다가 완료 소리를 들을 수 있어요.
+
+**Mac:**
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "afplay /System/Library/Sounds/Glass.aiff"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### 작업 완료 시 데스크탑 알림
+
+```json
+{
+  "hooks": {
+    "Stop": [
+      {
+        "hooks": [
+          {
+            "type": "command",
+            "command": "osascript -e 'display notification \"Claude Code 작업 완료!\" with title \"Claude Code\"'"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+### 위험한 명령어 차단
+
+실수로 중요한 파일을 삭제하는 명령어를 Claude Code가 실행하려 할 때 차단하는 훅이에요.
+
+```json
+{
+  "hooks": {
+    "PreToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "command": "echo \"$CLAUDE_TOOL_INPUT_COMMAND\" | grep -qE 'rm -rf|DROP TABLE|DELETE FROM' && echo '위험한 명령어가 감지됐어요. 실행을 차단합니다.' && exit 2 || exit 0"
+          }
+        ]
+      }
+    ]
+  }
+}
+```
+
+## Claude Code에게 훅 설정 부탁하기
+
+직접 JSON을 수정하기 어렵다면 Claude Code에게 부탁하세요:
+
+```
+> ~/.claude/settings.json 파일에 훅을 추가해줘.
+  Claude Code가 작업을 완료할 때마다 Mac 알림음이 나오게 해줘.
+```
+
+```
+> 현재 프로젝트의 .claude/settings.json에 훅 추가해줘.
+  Claude Code가 파일을 수정하기 전에 항상 .backups/ 폴더에 백업하게 해줘.
+```
+
+## 훅 설정 후 확인하기
+
+훅이 제대로 작동하는지 확인하려면:
+
+```
+> /hooks 명령어로 현재 설정된 훅을 보여줘
+```
+
+또는 Claude Code에게:
+
+```
+> 현재 설정된 훅 목록을 알려줘
+```
+
+<Callout type="warning">
+훅에 잘못된 명령어가 있으면 Claude Code 작동에 문제가 생길 수 있어요. 설정 후 반드시 테스트해보고, 문제가 있으면 Claude Code에게 "훅 설정 되돌려줘"라고 요청하세요.
+</Callout>
+
+---
+
+다음: [오케스트레이션 — 여러 AI를 동시에 →](/learn/11-orchestration)

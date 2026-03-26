@@ -1,0 +1,238 @@
+---
+title: "MCP 서버로 능력 확장하기"
+description: "Claude Code에 플러그인을 추가해서 웹 검색, Notion, Slack, GitHub 등 외부 서비스와 연결하는 방법"
+level: "advanced"
+order: 13
+estimatedTime: "15분"
+lastUpdated: "2026-03-26"
+---
+
+# MCP 서버로 능력 확장하기
+
+Claude Code는 기본적으로 로컬 파일만 다룰 수 있어요. 하지만 MCP 서버를 추가하면 웹 검색, Notion, Slack, GitHub 등 외부 서비스와도 연결할 수 있어요.
+
+## MCP가 뭔가요?
+
+MCP는 **Model Context Protocol**의 약자예요.
+
+> **비유**: 스마트폰의 앱스토어 같은 개념이에요. 기본 스마트폰은 전화와 문자만 되지만, 앱을 설치하면 은행 업무도 하고 음식 주문도 할 수 있죠. MCP 서버도 마찬가지예요 — Claude Code에 "앱"을 설치해서 더 많은 일을 시킬 수 있어요.
+
+MCP 서버를 추가하면 Claude Code가:
+- 인터넷에서 정보를 검색할 수 있어요
+- Notion 페이지를 읽고 쓸 수 있어요
+- Slack 메시지를 보낼 수 있어요
+- GitHub에서 이슈를 만들거나 코드를 올릴 수 있어요
+- 데이터베이스에 직접 접근할 수 있어요
+
+## MCP 서버 설치하기
+
+MCP 서버는 Claude Code 설정 파일에 추가해요.
+
+설정 파일 위치: `~/.claude/settings.json`
+
+### 기본 설치 방법
+
+Claude Code에게 부탁하면 가장 쉬워요:
+
+```
+> MCP 설정 도와줘. Notion을 연결하고 싶어.
+```
+
+또는 oh-my-claudecode가 있다면:
+
+```
+> /oh-my-claudecode:mcp-setup
+```
+
+설치 가이드가 나타나면 안내에 따라 진행하면 돼요.
+
+## 자주 쓰는 MCP 서버들
+
+### 🔍 웹 검색 (Brave Search / Tavily)
+
+인터넷에서 최신 정보를 검색할 수 있어요.
+
+**설치 후 사용 예시:**
+```
+> 오늘 환율이 얼마인지 검색해줘
+```
+
+```
+> Claude Code 최신 버전 릴리즈 노트를 찾아줘
+```
+
+```
+> 우리 경쟁사 웹사이트를 방문해서 신제품 정보를 정리해줘
+```
+
+**설정:**
+```json
+{
+  "mcpServers": {
+    "tavily": {
+      "command": "npx",
+      "args": ["-y", "tavily-mcp"],
+      "env": {
+        "TAVILY_API_KEY": "여기에API키입력"
+      }
+    }
+  }
+}
+```
+
+### 📓 Notion 연동
+
+Notion 페이지를 읽고, 쓰고, 데이터베이스를 관리할 수 있어요.
+
+**설치 후 사용 예시:**
+```
+> Notion의 "2024 프로젝트" 페이지 내용을 읽어줘
+```
+
+```
+> 오늘 회의 내용을 Notion 회의록 데이터베이스에 새 페이지로 추가해줘
+```
+
+```
+> Notion 작업 목록 데이터베이스에서 완료 안 된 항목만 보여줘
+```
+
+**설정:**
+```json
+{
+  "mcpServers": {
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "NOTION_API_KEY": "여기에NotionAPI키입력"
+      }
+    }
+  }
+}
+```
+
+### 💬 Slack 연동
+
+Slack 채널을 읽고 메시지를 보낼 수 있어요.
+
+**설치 후 사용 예시:**
+```
+> #general 채널의 오늘 메시지를 요약해줘
+```
+
+```
+> Claude Code 작업이 완료됐다고 #dev-team 채널에 알려줘
+```
+
+**설정:**
+```json
+{
+  "mcpServers": {
+    "slack": {
+      "command": "npx",
+      "args": ["-y", "@modelcontextprotocol/server-slack"],
+      "env": {
+        "SLACK_BOT_TOKEN": "여기에Slack토큰입력",
+        "SLACK_TEAM_ID": "여기에팀ID입력"
+      }
+    }
+  }
+}
+```
+
+### 🐙 GitHub 연동
+
+GitHub 저장소를 직접 관리할 수 있어요.
+
+**설치 후 사용 예시:**
+```
+> GitHub에서 우리 저장소의 열린 이슈 목록을 보여줘
+```
+
+```
+> 이 버그를 수정했으니 GitHub에 이슈를 닫아줘
+```
+
+```
+> 현재 변경사항을 GitHub에 커밋하고 PR을 만들어줘
+```
+
+### 🗃️ 데이터베이스 연동
+
+SQLite, PostgreSQL 등 데이터베이스에 직접 접근할 수 있어요.
+
+**설치 후 사용 예시:**
+```
+> database.db에서 지난 달 주문 데이터를 조회해줘
+```
+
+```
+> 고객 테이블에서 이메일이 없는 항목을 찾아줘
+```
+
+## 전체 설정 파일 예시
+
+여러 MCP 서버를 함께 쓸 때:
+
+```json
+{
+  "mcpServers": {
+    "tavily": {
+      "command": "npx",
+      "args": ["-y", "tavily-mcp"],
+      "env": {
+        "TAVILY_API_KEY": "tvly-..."
+      }
+    },
+    "notion": {
+      "command": "npx",
+      "args": ["-y", "@notionhq/notion-mcp-server"],
+      "env": {
+        "NOTION_API_KEY": "secret_..."
+      }
+    }
+  }
+}
+```
+
+<Callout type="warning">
+MCP 서버의 API 키는 외부 서비스 접근 권한이에요. 절대 다른 사람과 공유하거나 GitHub에 올리지 마세요. `.gitignore`에 settings.json을 추가해두는 것이 안전해요.
+</Callout>
+
+## MCP 설정 시 Claude Code에게 도움받기
+
+직접 설정하기 어렵다면 Claude Code에게:
+
+```
+> ~/.claude/settings.json에 Notion MCP 서버를 추가해줘.
+  API 키는 secret_abc123이야.
+```
+
+```
+> 현재 어떤 MCP 서버들이 연결돼 있는지 확인해줘
+```
+
+```
+> Tavily 검색 MCP 서버 설치하는 방법 알려줘
+```
+
+## 연결된 도구들 활용하기
+
+MCP 서버가 연결되면 Claude Code가 자연스럽게 활용해요:
+
+```
+> 오늘 팀 회의에서 나온 결정사항들을 Notion에 정리하고
+  완료되면 Slack #team 채널에 알려줘
+```
+
+이 하나의 요청으로 Claude Code가:
+1. 회의 내용 정리
+2. Notion 페이지 생성
+3. Slack 메시지 전송
+
+을 자동으로 처리해요.
+
+<Callout type="tip">
+처음에는 하나씩 연결해보세요. 가장 많이 쓰는 서비스(Notion이나 Slack)부터 시작해서 익숙해지면 더 추가하는 방식이 좋아요.
+</Callout>
