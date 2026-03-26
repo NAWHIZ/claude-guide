@@ -21,7 +21,7 @@ export function Nav() {
         {/* 로고 */}
         <Link href="/" className="flex items-center gap-2 font-bold text-purple-700 text-lg">
           <span className="text-2xl">✦</span>
-          <span>클로드 가이드</span>
+          <span>클로드코드 가이드</span>
         </Link>
 
         {/* 데스크탑 네비 */}
