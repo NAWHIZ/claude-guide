@@ -1,0 +1,179 @@
+---
+title: "GitHub 연동하기"
+description: "코드를 안전하게 백업하고 Vercel 자동 배포까지 — GitHub는 한 번만 설정하면 돼요"
+level: "intermediate"
+order: 16
+estimatedTime: "15분"
+lastUpdated: "2026-03-26"
+---
+
+# GitHub 연동하기
+
+서비스를 만들고 나면 두 가지 문제가 생겨요. "이 코드를 어디에 저장하지?"와 "Vercel에 어떻게 자동 배포하지?" — GitHub가 두 문제를 한 번에 해결해줍니다.
+
+## GitHub가 뭔가요?
+
+GitHub는 코드를 저장하고 관리하는 플랫폼이에요.
+
+> **비유**: 구글 드라이브나 iCloud 같은 클라우드 저장소인데, 코드에 특화되어 있어요. 변경 이력이 모두 기록되고, Vercel 같은 배포 서비스와 연동되며, 팀원과 공동 작업도 가능해요.
+
+GitHub를 쓰면:
+- 실수로 코드를 삭제해도 복구 가능
+- Vercel과 연동하면 GitHub에 올리는 순간 자동 배포
+- 어느 컴퓨터에서든 코드를 내려받아 작업 가능
+
+## 1단계: GitHub 계정 만들기
+
+1. [github.com](https://github.com) 접속
+2. **Sign up** 클릭
+3. 이메일, 비밀번호, 사용자명 입력
+4. 이메일 인증 완료
+
+무료 계정으로 모든 기능을 쓸 수 있어요.
+
+## 2단계: 새 저장소(Repository) 만들기
+
+저장소(Repository, 줄여서 "repo")는 하나의 프로젝트 폴더예요.
+
+1. GitHub 로그인 후 오른쪽 위 **+** 버튼 → **New repository**
+2. Repository name 입력 (예: `my-service`)
+3. **Private** 선택 (공개하고 싶으면 Public)
+4. **Create repository** 클릭
+
+<Callout type="tip">
+저장소 이름은 영어 소문자와 하이픈(-)만 쓰는 게 좋아요. 예: `claude-guide`, `marketing-dashboard`, `team-wiki`
+</Callout>
+
+## 3단계: Claude Code로 GitHub 연동하기
+
+로컬 프로젝트를 GitHub에 연결하는 건 Claude Code에게 맡기면 돼요.
+
+```
+> GitHub에 연동해줘. 저장소 주소는
+  https://github.com/사용자명/저장소명.git 이야
+```
+
+Claude Code가 필요한 git 명령어를 모두 실행해줄 거예요.
+
+처음 GitHub에 코드를 올릴 때 인증이 필요해요. 터미널에서 GitHub 로그인 창이 뜨면 브라우저에서 인증하거나, GitHub Personal Access Token을 입력하면 됩니다.
+
+<Callout type="info">
+**Personal Access Token이 필요한 경우:**
+1. GitHub → Settings → Developer settings → Personal access tokens → Tokens (classic)
+2. Generate new token → `repo` 권한 체크 → Generate
+3. 생성된 토큰을 비밀번호 대신 입력
+</Callout>
+
+## 4단계: 코드 올리기 (Commit & Push)
+
+코드를 수정하고 GitHub에 올리는 것을 "커밋(commit)하고 푸시(push)한다"고 해요.
+
+> **비유**: 커밋은 "저장", 푸시는 "클라우드에 업로드"예요. 워드에서 저장(Ctrl+S)하고 구글 드라이브에 올리는 것과 같아요.
+
+Claude Code에게 이렇게 말하면 돼요:
+
+```
+> 지금까지 변경된 내용을 GitHub에 올려줘.
+  커밋 메시지는 "로그인 페이지 추가"로
+```
+
+```
+> 변경 사항 저장하고 GitHub에 올려줘
+```
+
+Claude Code가 알아서 `git add`, `git commit`, `git push`를 실행해줘요.
+
+## 5단계: Vercel과 GitHub 연동하기
+
+GitHub에 올리는 순간 자동으로 배포되게 하려면 Vercel과 연동해야 해요.
+
+1. [vercel.com](https://vercel.com) 로그인
+2. **Add New Project** 클릭
+3. **Import Git Repository** 선택
+4. GitHub 계정 연동 허용
+5. 배포할 저장소 선택
+6. **Deploy** 클릭
+
+이제 GitHub에 코드를 올릴 때마다 Vercel이 자동으로 새 버전을 배포해요.
+
+<Callout type="tip">
+Vercel과 GitHub를 연동한 뒤엔 Claude Code에게 "GitHub에 올려줘"라고만 해도 자동으로 배포까지 됩니다. 따로 배포 명령 없이도요.
+</Callout>
+
+## 기본적인 Git 워크플로우
+
+실제로 작업할 때의 흐름이에요:
+
+```
+> 오늘 작업 내용 GitHub에 올려줘
+```
+
+Claude Code가 해주는 일:
+1. 변경된 파일 확인 (`git status`)
+2. 변경 내용 스테이징 (`git add`)
+3. 커밋 메시지 작성 후 저장 (`git commit`)
+4. GitHub에 업로드 (`git push`)
+5. Vercel이 감지해서 자동 배포 시작
+
+## 실수했을 때 되돌리기
+
+코드를 잘못 수정했을 때:
+
+```
+> 마지막으로 GitHub에 올린 상태로 되돌려줘
+```
+
+```
+> 어제 올린 버전으로 되돌아가고 싶어
+```
+
+Claude Code가 git 명령어로 처리해줘요.
+
+## .gitignore — 올리면 안 되는 파일 관리
+
+일부 파일은 GitHub에 올리면 안 돼요. `.gitignore` 파일에 적어두면 자동으로 제외돼요.
+
+```
+> .gitignore 파일 확인해줘. .env.local이 포함돼 있는지 봐줘
+```
+
+Next.js 프로젝트는 기본적으로 `.env.local`, `node_modules/` 등이 `.gitignore`에 포함돼요.
+
+<Callout type="warning">
+`.env.local` 파일이 `.gitignore`에 있는지 꼭 확인하세요. 이 파일이 GitHub에 올라가면 API 키가 공개됩니다.
+</Callout>
+
+## 퀴즈로 확인하기
+
+<Quiz
+  questions={[
+    {
+      question: "GitHub의 주요 역할은?",
+      options: ["동영상 편집", "코드 저장 및 버전 관리 + Vercel 자동 배포 연동", "이메일 발송", "이미지 호스팅"],
+      answer: 1,
+      explanation: "GitHub는 코드를 클라우드에 저장하고, Vercel과 연동하면 코드 업로드 시 자동 배포까지 됩니다."
+    },
+    {
+      question: "GitHub에 코드를 올리는 작업을 뭐라고 하나요?",
+      options: ["업로드와 다운로드", "커밋(저장)하고 푸시(올리기)", "복사와 붙여넣기", "인코딩과 디코딩"],
+      answer: 1,
+      explanation: "커밋은 변경 사항을 저장하는 것, 푸시는 GitHub에 올리는 것이에요. Claude Code에게 '변경 내용 GitHub에 올려줘'라고 하면 다 해줍니다."
+    },
+    {
+      question: "Vercel과 GitHub를 연동하면 어떤 일이 자동으로 일어나나요?",
+      options: ["매일 이메일이 옴", "GitHub에 코드를 올릴 때마다 Vercel이 자동으로 새 버전을 배포", "파일이 자동 삭제됨", "코드가 자동으로 수정됨"],
+      answer: 1,
+      explanation: "Vercel이 GitHub 저장소를 감시하다가 새 코드가 올라오면 자동으로 빌드하고 배포해요."
+    },
+    {
+      question: ".gitignore 파일의 역할은?",
+      options: ["코드를 더 빠르게 실행", "GitHub에 올리면 안 되는 파일을 목록으로 관리", "자동 테스트 실행", "데이터베이스 설정"],
+      answer: 1,
+      explanation: ".gitignore에 적힌 파일은 GitHub에 올라가지 않아요. .env.local처럼 API 키가 담긴 파일이 꼭 여기 포함돼야 해요."
+    }
+  ]}
+/>
+
+---
+
+다음: [Vercel 배포 실전 →](/learn/17-vercel-deploy)

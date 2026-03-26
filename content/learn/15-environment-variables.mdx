@@ -1,0 +1,167 @@
+---
+title: "환경변수(.env) 완벽 이해"
+description: "API 키와 비밀 설정값을 안전하게 관리하는 방법 — 모든 서비스 연동의 기초"
+level: "intermediate"
+order: 15
+estimatedTime: "12분"
+lastUpdated: "2026-03-26"
+---
+
+# 환경변수(.env) 완벽 이해
+
+Supabase, Vercel, Notion, Figma 등 어떤 서비스든 연동하려면 반드시 알아야 하는 개념이 있어요. 바로 **환경변수**입니다.
+
+## 환경변수가 뭔가요?
+
+환경변수는 프로그램이 실행될 때 참조하는 **외부 설정값**이에요. 주로 API 키나 비밀번호처럼 코드 안에 직접 쓰면 안 되는 민감한 정보를 담아요.
+
+> **비유**: 아파트 공동현관 비밀번호를 생각해보세요. 이 번호는 입주민만 알아야 해요. 건물 외벽에 크게 써놓으면 안 되죠. 환경변수는 이 비밀번호를 안전한 곳에 따로 보관하는 방식이에요.
+
+코드 파일 안에 API 키를 직접 쓰면:
+- GitHub에 올릴 때 전 세계에 공개됨
+- 누군가 그 키로 여러분 비용이 청구되는 API를 무제한 사용할 수 있음
+
+환경변수를 쓰면:
+- 코드와 비밀 정보가 분리됨
+- GitHub에 올려도 안전함
+- 서비스마다 다른 값을 쉽게 쓸 수 있음
+
+## .env.local 파일 만들기
+
+Next.js 프로젝트에서는 `.env.local` 파일에 환경변수를 저장해요.
+
+```
+> 이 프로젝트 폴더에 .env.local 파일을 만들어줘.
+  내용은:
+  ANTHROPIC_API_KEY=sk-ant-api03-여기에본인키
+  NEXT_PUBLIC_SUPABASE_URL=https://xxxxx.supabase.co
+  NEXT_PUBLIC_SUPABASE_ANON_KEY=여기에본인키
+```
+
+파일이 만들어지면 이런 형태가 돼요:
+
+```bash
+# .env.local
+
+ANTHROPIC_API_KEY=sk-ant-api03-...
+NEXT_PUBLIC_SUPABASE_URL=https://lfgud...supabase.co
+NEXT_PUBLIC_SUPABASE_ANON_KEY=eyJhbGciO...
+CRON_SECRET=내가-만든-비밀-문자열
+```
+
+<Callout type="warning">
+`.env.local`은 절대 GitHub에 올리면 안 돼요. Next.js는 기본적으로 `.gitignore`에 `.env.local`을 포함시켜서 자동으로 보호해줘요. 혹시 없다면 Claude Code에게 "`.gitignore`에 `.env.local` 추가해줘"라고 하세요.
+</Callout>
+
+## NEXT_PUBLIC_ 접두사의 의미
+
+환경변수 이름 앞에 `NEXT_PUBLIC_`이 붙은 것과 안 붙은 것의 차이가 있어요.
+
+| 구분 | 예시 | 접근 가능한 곳 |
+|------|------|----------------|
+| `NEXT_PUBLIC_` 없음 | `ANTHROPIC_API_KEY` | 서버에서만 (안전) |
+| `NEXT_PUBLIC_` 있음 | `NEXT_PUBLIC_SUPABASE_URL` | 서버 + 브라우저 |
+
+> **비유**: 사무실 내선번호(서버 전용)와 회사 대표 전화번호(외부 공개)의 차이예요. API 키처럼 절대 노출되면 안 되는 건 `NEXT_PUBLIC_` 없이, 브라우저에서도 필요한 URL 같은 건 `NEXT_PUBLIC_`을 붙여요.
+
+Supabase의 경우:
+- `NEXT_PUBLIC_SUPABASE_URL` → 브라우저에서도 사용하니 공개 가능
+- `NEXT_PUBLIC_SUPABASE_ANON_KEY` → 읽기 전용 공개 키라 괜찮음
+- `SUPABASE_SERVICE_ROLE_KEY` → 관리자 키, 절대 공개 불가
+
+## 코드에서 환경변수 사용하는 법
+
+Claude Code가 만들어주는 코드에서는 이렇게 사용돼요:
+
+```typescript
+// 서버 전용 API 키
+const anthropic = new Anthropic({
+  apiKey: process.env.ANTHROPIC_API_KEY!
+})
+
+// 클라이언트에서도 쓰이는 Supabase URL
+const supabase = createClient(
+  process.env.NEXT_PUBLIC_SUPABASE_URL!,
+  process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+)
+```
+
+직접 코드를 볼 일은 없지만, Claude Code에게 "환경변수로 처리해줘"라고 하면 이런 방식으로 만들어줘요.
+
+## Vercel에 환경변수 등록하기
+
+로컬(내 컴퓨터)에서는 `.env.local`을 쓰지만, Vercel에 배포하면 그 파일이 올라가지 않아요. Vercel 대시보드에서 별도로 등록해야 합니다.
+
+**순서:**
+1. [vercel.com](https://vercel.com) → 프로젝트 클릭
+2. **Settings** 탭 클릭
+3. 왼쪽 메뉴에서 **Environment Variables** 클릭
+4. Key와 Value를 입력하고 **Save** 클릭
+
+<Callout type="tip">
+환경변수를 추가하거나 변경한 후에는 Vercel에서 **재배포(Redeploy)**를 해야 새 값이 반영돼요. Claude Code에게 "Vercel 재배포해줘"라고 하거나 Vercel 대시보드에서 직접 하면 됩니다.
+</Callout>
+
+## 자주 쓰는 환경변수 목록
+
+서비스를 만들다 보면 자주 등장하는 환경변수들이에요:
+
+| 변수명 | 출처 | 용도 |
+|--------|------|------|
+| `ANTHROPIC_API_KEY` | console.anthropic.com | Claude API 호출 |
+| `NEXT_PUBLIC_SUPABASE_URL` | Supabase 프로젝트 설정 | DB 연결 주소 |
+| `NEXT_PUBLIC_SUPABASE_ANON_KEY` | Supabase 프로젝트 설정 | DB 읽기 권한 |
+| `TAVILY_API_KEY` | tavily.com | 웹 검색 API |
+| `CRON_SECRET` | 직접 만들기 | 크론 API 보호용 비밀번호 |
+| `NOTION_API_KEY` | notion.so/my-integrations | Notion 연동 |
+
+`CRON_SECRET`처럼 직접 만드는 값은 길고 복잡한 문자열이면 아무거나 괜찮아요.
+
+```
+> 안전한 랜덤 문자열 하나 만들어줘. CRON_SECRET으로 쓸 거야.
+```
+
+## 환경변수를 CLI에서 바로 설정하기 (임시)
+
+터미널 세션 동안만 임시로 값을 쓰고 싶을 때:
+
+```bash
+export ANTHROPIC_API_KEY=sk-ant-api03-...
+```
+
+이 방법은 터미널을 닫으면 사라져요. 영구 설정은 `.env.local`이나 Vercel 대시보드를 쓰세요.
+
+## 퀴즈로 확인하기
+
+<Quiz
+  questions={[
+    {
+      question: "환경변수를 사용하는 주된 이유는?",
+      options: ["코드를 더 빠르게 실행하기 위해", "API 키 같은 민감한 정보를 코드와 분리해 안전하게 관리하기 위해", "파일 크기를 줄이기 위해", "다른 언어로 번역하기 위해"],
+      answer: 1,
+      explanation: "환경변수는 API 키처럼 노출되면 위험한 정보를 코드 파일과 분리해서 보관해요. GitHub에 올려도 안전해집니다."
+    },
+    {
+      question: "NEXT_PUBLIC_ 접두사가 붙은 환경변수와 안 붙은 것의 차이는?",
+      options: ["가격 차이", "NEXT_PUBLIC_은 브라우저에서도 접근 가능, 없으면 서버에서만", "NEXT_PUBLIC_이 더 보안이 강함", "차이 없음"],
+      answer: 1,
+      explanation: "NEXT_PUBLIC_이 붙으면 브라우저에서도 접근 가능해요. API 키처럼 비밀인 것은 접두사 없이, URL처럼 공개해도 되는 건 NEXT_PUBLIC_을 붙여요."
+    },
+    {
+      question: "Vercel에 배포할 때 .env.local 파일은 어떻게 되나요?",
+      options: ["자동으로 Vercel에 업로드됨", "Vercel에 올라가지 않아 대시보드에서 별도 등록 필요", "GitHub에 올라감", "자동으로 삭제됨"],
+      answer: 1,
+      explanation: ".env.local은 로컬 전용이에요. Vercel 배포 시엔 Settings → Environment Variables에서 직접 등록해야 해요."
+    },
+    {
+      question: "환경변수 등록 후 Vercel에서 해야 할 일은?",
+      options: ["아무것도 안 해도 됨", "재배포(Redeploy)를 해야 새 값이 반영됨", "파일 삭제", "터미널 재시작"],
+      answer: 1,
+      explanation: "환경변수를 추가하거나 변경한 후에는 Vercel 재배포가 필요해요. 배포 후에야 새 값이 적용됩니다."
+    }
+  ]}
+/>
+
+---
+
+다음: [GitHub 연동하기 →](/learn/16-github-setup)
