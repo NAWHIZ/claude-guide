@@ -11,7 +11,7 @@ type NewsItem = {
   source_name: string
   source_url: string | null
   priority: 'official' | 'community'
-  category: string
+  category: string[]
   published_date: string
   created_at: string
 }

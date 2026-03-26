@@ -9,7 +9,7 @@ type NewsItem = {
   source_name: string
   source_url: string | null
   priority: 'official' | 'community'
-  category: string
+  category: string[]
   published_date: string
   created_at: string
 }
@@ -20,6 +20,8 @@ const ROLES = [
   { key: 'design', label: '디자인', emoji: '🎨' },
   { key: 'pm', label: 'PM', emoji: '📋' },
   { key: 'marketing', label: '마케팅', emoji: '📣' },
+  { key: 'official', label: '공식', emoji: '⭐' },
+  { key: 'community', label: '커뮤니티', emoji: '💬' },
   { key: 'office', label: '일반사무', emoji: '🗂️' },
 ]
 
@@ -73,7 +75,10 @@ function groupByDate(items: NewsItem[]) {
 export function NewsFilter({ news }: { news: NewsItem[] }) {
   const [activeRole, setActiveRole] = useState('all')
 
-  const filtered = activeRole === 'all' ? news : news.filter(n => n.category === activeRole)
+  const filtered = activeRole === 'all' ? news
+    : activeRole === 'official' || activeRole === 'community'
+      ? news.filter(n => n.priority === activeRole)
+      : news.filter(n => Array.isArray(n.category) && n.category.includes(activeRole))
   const grouped = groupByDate(filtered)
   const dates = Object.keys(grouped).sort((a, b) => b.localeCompare(a))
 
@@ -93,9 +98,11 @@ export function NewsFilter({ news }: { news: NewsItem[] }) {
           >
             <span>{role.emoji}</span>
             <span>{role.label}</span>
-            {activeRole !== 'all' && role.key !== 'all' && (
+            {role.key !== 'all' && (
               <span className={`text-xs ${activeRole === role.key ? 'text-purple-200' : 'text-gray-400'}`}>
-                {news.filter(n => n.category === role.key).length}
+                {role.key === 'official' || role.key === 'community'
+                  ? news.filter(n => n.priority === role.key).length
+                  : news.filter(n => Array.isArray(n.category) && n.category.includes(role.key)).length}
               </span>
             )}
           </button>
@@ -136,14 +143,14 @@ export function NewsFilter({ news }: { news: NewsItem[] }) {
                                 {item.source_name}
                               </span>
                             )}
-                            {(() => {
-                              const role = ROLES.find(r => r.key === item.category)
-                              return role && role.key !== 'all' ? (
-                                <span className="text-xs font-medium px-2 py-0.5 bg-purple-50 text-purple-700 rounded-full border border-purple-200">
+                            {Array.isArray(item.category) && item.category.map(cat => {
+                              const role = ROLES.find(r => r.key === cat)
+                              return role ? (
+                                <span key={cat} className="text-xs font-medium px-2 py-0.5 bg-purple-50 text-purple-700 rounded-full border border-purple-200">
                                   {role.emoji} {role.label}
                                 </span>
                               ) : null
-                            })()}
+                            })}
                           </div>
                           <span className="text-xs text-gray-400 shrink-0">{formatTime(item.created_at)} 저장</span>
                         </div>
