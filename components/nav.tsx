@@ -6,6 +6,7 @@ import { useState } from 'react'
 
 const links = [
   { href: '/learn', label: '학습하기' },
+  { href: '/weekly', label: '위클리' },
   { href: '/news', label: '최신 소식' },
   { href: '/reference', label: '레퍼런스' },
 ]

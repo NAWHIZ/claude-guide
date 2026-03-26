@@ -3,6 +3,7 @@ import { getAllLearnPosts } from '@/lib/content'
 import { LevelBadge } from '@/components/level-badge'
 import { createClient } from '@supabase/supabase-js'
 import { HeroRoles } from '@/components/hero-roles'
+import { WeeklyCard, type WeeklyDigest } from '@/components/weekly-card'
 
 export const dynamic = 'force-dynamic'
 
@@ -19,10 +20,25 @@ async function getLatestNews() {
   return data || []
 }
 
+async function getLatestWeekly(): Promise<WeeklyDigest | null> {
+  const supabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY!
+  )
+  const { data } = await supabase
+    .from('weekly_digests')
+    .select('*')
+    .order('week_start', { ascending: false })
+    .limit(1)
+    .single()
+  return data as WeeklyDigest | null
+}
+
 export default async function HomePage() {
   const posts = getAllLearnPosts()
   const beginner = posts.filter((p) => p.level === 'beginner').slice(0, 3)
   const latestNews = await getLatestNews()
+  const latestWeekly = await getLatestWeekly()
 
   return (
     <div>
@@ -82,6 +98,22 @@ export default async function HomePage() {
           </div>
         </div>
       </section>
+
+      {/* AI 트렌드 위클리 */}
+      {latestWeekly && (
+        <section className="py-12 px-4 bg-gradient-to-br from-purple-50 to-indigo-50">
+          <div className="mx-auto max-w-5xl">
+            <div className="flex items-center justify-between mb-6">
+              <div>
+                <h2 className="text-2xl font-bold text-gray-900">📊 AI 트렌드 위클리</h2>
+                <p className="text-sm text-gray-500 mt-1">이번 주 AI 트렌드를 직무별로 정리했어요</p>
+              </div>
+              <Link href="/weekly" className="text-sm text-purple-600 hover:underline">전체 보기 →</Link>
+            </div>
+            <WeeklyCard digest={latestWeekly} />
+          </div>
+        </section>
+      )}
 
       {/* 최신 소식 미리보기 */}
       {latestNews.length > 0 && (
